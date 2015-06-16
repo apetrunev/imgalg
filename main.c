@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 {
 	GdkPixbuf *pbuf, *newbuf = NULL;
 	GError *error = NULL;
-	int  w, h, opt, t_low, t_high, rmin, rmax, i, n, t, step;
+	int  w, h, opt, t_low, t_high, rmin, rmax, i, n, step;
 	struct img_ctx *rgb, *gray, *edges;
 	struct img_gradient *grad;
 	struct vec3 *circles = NULL;
