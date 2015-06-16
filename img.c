@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <unistd.h>
 
+#include "xmalloc.h"
 #include "img.h"
 
 struct img_ctx *img_ctx_new(int w, int h, img_type_t type, color_type_t color)
@@ -11,7 +12,7 @@ struct img_ctx *img_ctx_new(int w, int h, img_type_t type, color_type_t color)
 	struct img_ctx *c;
 	int len;
 
-	c = malloc(sizeof(*c));
+	c = xmalloc(sizeof(*c));
 	
 	c->type = type;
 	c->w = w;
@@ -21,15 +22,15 @@ struct img_ctx *img_ctx_new(int w, int h, img_type_t type, color_type_t color)
 		
 	switch (type) {
 	case TYPE_GRAY:
-		c->pix = malloc(len*sizeof(*(c->pix)));
+		c->pix = xmalloc0(len*sizeof(*(c->pix)));
 		/* initialize pixels to spcified color */
 		if (color != C_NONE)
 			memset(c->pix, color, len*sizeof(*(c->pix)));
 		break;
 	case TYPE_RGB:
-		c->r = malloc(len*sizeof(*(c->r)));
-		c->g = malloc(len*sizeof(*(c->g)));
-		c->b = malloc(len*sizeof(*(c->b)));
+		c->r = xmalloc(len*sizeof(*(c->r)));
+		c->g = xmalloc(len*sizeof(*(c->g)));
+		c->b = xmalloc(len*sizeof(*(c->b)));
 		break;
 	default:
 		abort();	 
@@ -45,22 +46,22 @@ void img_destroy_ctx(struct img_ctx *ctx)
 	switch (ctx->type) {
 	case TYPE_GRAY:
 		if (ctx->pix != NULL)
-			free(ctx->pix);
+			xfree(ctx->pix);
 		break;
 	case TYPE_RGB:
 		if (ctx->r != NULL)
-			free(ctx->r);
+			xfree(ctx->r);
 		if (ctx->g != NULL)
-			free(ctx->g);
+			xfree(ctx->g);
 		if (ctx->b != NULL)
-			free(ctx->b);
+			xfree(ctx->b);
 		break;
 	default:
 		fprintf(stderr, "error: uknown type\n");
 		assert(0);
 	}
 
-	free(ctx);
+	xfree(ctx);
 }
 
 /* gradient constructor
@@ -72,15 +73,15 @@ struct img_gradient *img_gradient_new(struct img_ctx *ctx)
 
 	assert(ctx != NULL);
 
-	g = malloc(sizeof(*g));	
+	g = xmalloc(sizeof(*g));	
 			
 	g->w = ctx->w;
 	g->h = ctx->h;		
 	size = ctx->w*ctx->h;
 
 	/* magnitude and direction of gradient at every point */
-	g->gmag = malloc(size*sizeof(*(g->gmag)));
-	g->gdir = malloc(size*sizeof(*(g->gdir)));
+	g->gmag = xmalloc(size*sizeof(*(g->gmag)));
+	g->gdir = xmalloc(size*sizeof(*(g->gdir)));
 	
 	return g;
 }
@@ -90,9 +91,9 @@ void img_gradient_destroy(struct img_gradient *g)
 	assert(g != NULL);
 
 	if (g->gmag != NULL)
-		free(g->gmag);
+		xfree(g->gmag);
 	if (g->gdir != NULL)
-		free(g->gdir);
+		xfree(g->gdir);
 
-	free(g);
+	xfree(g);
 }

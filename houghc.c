@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <math.h>
 
+#include "xmalloc.h"
 #include "houghc.h"
 #include "canny.h"
 #include "sobel.h"
@@ -33,7 +34,7 @@ static int *get_radii_range(int minr, int maxr)
 	int *r;
 
 	len = maxr - minr + 1;
-	r = malloc(sizeof(*r)*len);
+	r = xmalloc(sizeof(*r)*len);
 	
 	for (i = 0; i < len; i++) {
 		r[i] = minr + i;
@@ -50,13 +51,13 @@ static int *get_cells(struct img_ctx *im, char axis, int step)
 
 	if (axis == 'x') {
 		len = im->w / step;
-		cells = malloc(sizeof(*cells)*len);
+		cells = xmalloc(sizeof(*cells)*len);
 		for (i = 0; i < len; i++) {
 			cells[i] = i*step;
 		}
 	} else if (axis == 'y') {
 		len = im->h / step;
-		cells = malloc(sizeof(*cells)*len);
+		cells = xmalloc(sizeof(*cells)*len);
 		for (i = 0; i < len; i++) {
 			cells[i] = i*step;
 		}
@@ -88,10 +89,10 @@ static void houghspace_free(int **hspace, int len)
 
 	for (i = 0; i < len; i++) {
 		if (hspace[i] != NULL)
-			free(hspace[i]);
+			xfree(hspace[i]);
 	}
 
-	free(hspace);
+	xfree(hspace);
 }
 
 /* increment weight of specified element in hough space */
@@ -117,7 +118,7 @@ static void houghspace_increment(int **hspace, int *hlens, int hsize, int ridx, 
 		nn = 2*(idx + 1);
 		/* new size */
 		nsize = nn*sizeof(*hspace[ridx]);
-		p = realloc(hspace[ridx], nsize);
+		p = xrealloc(hspace[ridx], nsize);
 		/* set part of space behind old size to zero */
 		memset(p + n, 0, nsize - size);
 		hlens[ridx] = nsize; 
@@ -142,7 +143,7 @@ static void vector_append(struct vec_array *array, int x, int y, int r)
 	
 	if (array->used >= array->size) {
 		array->size += BUFSIZE;
-		p = realloc(array->arr, array->size);
+		p = xrealloc(array->arr, array->size);
 		array->arr = p;
 	}
 	/* move pointet to the next available element */
@@ -171,10 +172,10 @@ static int _houghcircles(struct img_ctx *im, struct vec3 **circles, int rmin, in
 	radiuses = get_radii_range(rmin, rmax);
 	
 	/* array of pairs (r,idx) */
-	hspace = malloc(sizeof(*hspace)*rlen);
+	hspace = xmalloc(sizeof(*hspace)*rlen);
 	memset(hspace, 0, sizeof(*hspace)*rlen);
 	/* lengths of arrays of indexes for every radii */
-	hlens = malloc(sizeof(*hlens)*rlen);
+	hlens = xmalloc(sizeof(*hlens)*rlen);
 	memset(hlens, 0, sizeof(*hlens)*rlen);
 	/* init placeholder for local maximas */
 	memset(&centers, 0, sizeof(centers));
@@ -374,10 +375,10 @@ static int _houghcircles(struct img_ctx *im, struct vec3 **circles, int rmin, in
 	n = centers.last;
 
 	houghspace_free(hspace, rlen);
-	free(radiuses);
-	free(xcells);
-	free(ycells);
-	free(hlens);
+	xfree(radiuses);
+	xfree(xcells);
+	xfree(ycells);
+	xfree(hlens);
 
 	return n;
 }

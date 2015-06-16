@@ -9,6 +9,7 @@
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+#include "xmalloc.h"
 #include "img.h"
 #include "img_utils.h"
 #include "sobel.h"
@@ -131,7 +132,7 @@ void refresh_cb(void)
 void free_cb(void)
 {
 	if (edge_ctx.edge_pixels)
-		free(edge_ctx.edge_pixels);
+		xfree(edge_ctx.edge_pixels);
 }
 
 int main(int argc, char **argv)
@@ -158,7 +159,7 @@ int main(int argc, char **argv)
 	while ((opt = getopt_long(argc, argv, "f:l:h:m:x:", long_options, NULL)) != -1) { 
 		switch (opt) {
 		case 'f':
-			fname = strdup(optarg);
+			fname = xstrdup(optarg);
 			break;
 		case 'l':
 			t_low = atoi(optarg);
@@ -242,6 +243,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
         }
 
+	xfree(fname);
 	edge_ctx.free();
 	
 	vec3_destroy(circles);

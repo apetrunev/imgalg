@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <math.h>
 
+#include "xmalloc.h"
 #include "common.h"
 #include "sobel.h"
 #include "canny.h"
@@ -122,7 +123,7 @@ static void edge_append(int idx)
 	if (edge_ctx.edge_used >= edge_ctx.edge_size) {
 		
 		edge_ctx.edge_size += BUFSIZE;
-		p = realloc(edge_ctx.edge_pixels, /* sizeof(*edge_ctx.edge_pixels)* */edge_ctx.edge_size);	
+		p = xrealloc(edge_ctx.edge_pixels, edge_ctx.edge_size);	
 	
 		if (p == NULL) {
 			fprintf(stderr, "edge_append: cannot allocate memory\n");

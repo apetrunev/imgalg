@@ -16,14 +16,10 @@ int img_grayscale(struct img_ctx *src, struct img_ctx *dst)
 	assert(src->type == TYPE_RGB);
 
 	dst->type = TYPE_GRAY;
-	
 	dst->w = src->w;
 	dst->h = src->h;
 
-	dst->pix = malloc(src->w*src->h);
-
 	p = dst->pix;
-	
 	r = src->r;
 	g = src->g;
 	b = src->b;
