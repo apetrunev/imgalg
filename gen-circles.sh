@@ -2,11 +2,6 @@
 
 OPTS=$(getopt -o x:y: -l rmin: -l rmax: -l step: -- "$@")
 
-if [ $? != 0 ]; then
-	echo "error: something went wrong"
-	exit 1
-fi
-
 X=""
 Y=""
 RMIN=""
