@@ -1,5 +1,5 @@
 CC = gcc
-SRCS = otsu.c houghc.c canny.c sobel.c img_utils.c img.c vec.c 
+SRCS = main.c houghc.c canny.c sobel.c img_utils.c img.c vec.c 
 OBJS = $(SRCS:.c=.o)
 
 CFLAGS += $(shell pkg-config --cflags gtk+-2.0 glib-2.0)
