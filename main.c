@@ -193,7 +193,7 @@ int main(int argc, char **argv)
 			break;
 		default:
 			fprintf(stderr, "error: unknow option\n");
-			exit(1);
+			exit(EXIT_FAILURE);
 			break;
 		}
 	}
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 
 	if (fname == NULL) {
 		fprintf(stderr, "error: no file name is specified\n");
-		exit(1);
+		return EXIT_FAILURE;
 	}
 	
 	/* default output name */
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
 	pbuf = gdk_pixbuf_new_from_file(fname, &error);
 	if (pbuf == NULL) {
 		fprintf(stderr, "error: cannot load image\n");
-		exit(1);
+		return EXIT_FAILURE;
 	}
 
 	/* do required manipulation */
@@ -253,13 +253,13 @@ int main(int argc, char **argv)
 	newbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, w, h);
 	if (newbuf == NULL) {
 		fprintf(stderr, "error: cannot create pixbuf\n");
-		exit(1);
+		return EXIT_FAILURE;
 	}
 	
 	load_ctx(edges, newbuf);
 
 	if (!gdk_pixbuf_save(newbuf, outname, ext, &error, NULL)) {
-		g_printerr("failed to save image: %s\n", error->message);
+		fpritnf(stderr, "failed to save image: %s\n", error->message);
 		g_error_free(error);
 		return EXIT_FAILURE;
         }
