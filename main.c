@@ -11,9 +11,9 @@
 
 #include "img.h"
 #include "img_utils.h"
-#include "houghc.h"
-#include "canny.h"
 #include "sobel.h"
+#include "canny.h"
+#include "houghc.h"
 
 int get_ctx(GdkPixbuf *pbuf, img_type_t type, struct img_ctx **imctx)
 {
@@ -120,16 +120,18 @@ int load_ctx(struct img_ctx *ctx, GdkPixbuf *pbuf)
 /* callback for edge_ctx */
 void refresh_cb(void)
 {
-	memset((void*)edge_ctx.edge_pixels, 0, sizeof(edge_ctx.edge_size));
-	
-	edge_ctx.edge_used = 0;
-	edge_ctx.edge_last = 0;
+	if (edge_ctx.edge_pixels) {
+		memset((void*)edge_ctx.edge_pixels, 0, sizeof(edge_ctx.edge_size));
+		edge_ctx.edge_used = 0;
+		edge_ctx.edge_last = 0;
+	}
 }
 
 /* callback for edge_ctx */
 void free_cb(void)
 {
-	free(edge_ctx.edge_pixels);
+	if (edge_ctx.edge_pixels)
+		free(edge_ctx.edge_pixels);
 }
 
 int main(int argc, char **argv)
@@ -215,6 +217,7 @@ int main(int argc, char **argv)
 	grad = img_gradient_new(gray);
 	sobel_gradient(gray, grad);
 	canny(t_low, t_high, gray, grad, edges);
+
 	n = houghcircles(edges, &circles, rmin, rmax, step, w*h, grad);
 	
 	/* output detected circles */
@@ -238,9 +241,9 @@ int main(int argc, char **argv)
 		g_error_free(error);
 		return EXIT_FAILURE;
         }
-	
-	edge_ctx.free();
 
+	edge_ctx.free();
+	
 	vec3_destroy(circles);
 	
 	img_destroy_ctx(rgb);
