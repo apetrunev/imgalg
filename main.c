@@ -117,6 +117,21 @@ int load_ctx(struct img_ctx *ctx, GdkPixbuf *pbuf)
 	return RET_OK;
 }
 
+/* callback for edge_ctx */
+void refresh_cb(void)
+{
+	memset((void*)edge_ctx.edge_pixels, 0, sizeof(edge_ctx.edge_size));
+	
+	edge_ctx.edge_used = 0;
+	edge_ctx.edge_last = 0;
+}
+
+/* callback for edge_ctx */
+void free_cb(void)
+{
+	free(edge_ctx.edge_pixels);
+}
+
 int main(int argc, char **argv)
 {
 	GdkPixbuf *pbuf, *newbuf = NULL;
@@ -193,6 +208,9 @@ int main(int argc, char **argv)
 	img_grayscale(rgb, gray);
 	img_gaussian_blur(gray, gray);
 	
+	edge_ctx.refresh = refresh_cb;
+	edge_ctx.free = free_cb;
+
 	/* compute gradient values */
 	grad = img_gradient_new(gray);
 	sobel_gradient(gray, grad);
@@ -221,7 +239,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
         }
 	
-	free(edge_ctx.edge_pixels);
+	edge_ctx.free();
 
 	vec3_destroy(circles);
 	
