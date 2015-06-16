@@ -263,8 +263,11 @@ int main(int argc, char **argv)
 		g_error_free(error);
 		return EXIT_FAILURE;
         }
-
+	
 	xfree(fname);
+	xfree(outname);
+	xfree(ext);
+	
 	edge_ctx.free();
 	
 	vec3_destroy(circles);
