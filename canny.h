@@ -8,6 +8,8 @@ struct edge {
 	size_t edge_size;	   /* size in bytes */
 	size_t edge_used;
 	unsigned int edge_last;	   /* last index */
+	void (*refresh)(void);	   /* fill edge_pixels with 0 */
+	void (*free)(void);	   /* free memory used by edge_pixels */
 };
 
 extern struct edge edge_ctx;

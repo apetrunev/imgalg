@@ -203,9 +203,8 @@ int canny(int t_low, int t_high, struct img_ctx *img, struct img_gradient *grad,
 	assert(grad != NULL);
 	assert(edges != NULL);
 
-	/* clear data from global buffer */
-	memset(edge_ctx.edge_pixels, 0, edge_ctx.edge_size);
-	edge_ctx.edge_size = 0;
+	if (edge_ctx.refresh)
+		edge_ctx.refresh();
 
 	non_max_suppression(img, grad);
 	double_thresholding(img, t_low, t_high);
