@@ -128,7 +128,6 @@ void refresh_cb(void)
 	}
 }
 
-/* callback for edge_ctx */
 void free_cb(void)
 {
 	if (edge_ctx.edge_pixels)
@@ -194,7 +193,6 @@ int main(int argc, char **argv)
 		default:
 			fprintf(stderr, "error: unknow option\n");
 			exit(EXIT_FAILURE);
-			break;
 		}
 	}
 
@@ -259,7 +257,7 @@ int main(int argc, char **argv)
 	load_ctx(edges, newbuf);
 
 	if (!gdk_pixbuf_save(newbuf, outname, ext, &error, NULL)) {
-		fpritnf(stderr, "failed to save image: %s\n", error->message);
+		fprintf(stderr, "failed to save image: %s\n", error->message);
 		g_error_free(error);
 		return EXIT_FAILURE;
         }
