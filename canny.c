@@ -5,11 +5,9 @@
 #include <assert.h>
 #include <math.h>
 
-#include "canny.h"
-#include "sobel.h"
 #include "common.h"
-
-struct edge edge_ctx;
+#include "sobel.h"
+#include "canny.h"
 
 static int non_max_suppression(struct img_ctx *ctx, struct img_gradient *g)
 {
