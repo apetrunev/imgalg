@@ -7,8 +7,8 @@ typedef void (*callback_type_t)(void);
 
 struct edge {
 	unsigned int *edge_pixels;	/* indexes of edges */
-	unsigned int edge_size;		/* size in bytes */
-	unsigned int edge_used;
+	size_t edge_size;		/* size in bytes */
+	size_t edge_used;
 	unsigned int edge_last;		/* last index */
 	callback_type_t refresh;	/* fill edge_pixels with 0 */
 	callback_type_t	free;	/* free memory used by edge_pixels */
