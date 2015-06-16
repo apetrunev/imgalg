@@ -135,6 +135,16 @@ void free_cb(void)
 		xfree(edge_ctx.edge_pixels);
 }
 
+char *get_extention(char *fname)
+{
+	char *p;
+
+	assert(fname != NULL);
+	
+	p = strchr(fname, '.') + 1;
+	return xstrdup(p);
+}
+
 int main(int argc, char **argv)
 {
 	GdkPixbuf *pbuf, *newbuf = NULL;
@@ -143,7 +153,7 @@ int main(int argc, char **argv)
 	struct img_ctx *rgb, *gray, *edges;
 	struct img_gradient *grad;
 	struct vec3 *circles = NULL;
-	char *fname = NULL;
+	char *fname, *outname, *ext;
 	
 	struct option long_options[] = {
 		{ "rmin", required_argument, NULL, 'm' },
@@ -152,11 +162,12 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 }
 	};
 
+	fname = outname = ext = NULL;
 	t_low = t_high = 0;
 	rmin = rmax = 0;
 	step = 1;
 
-	while ((opt = getopt_long(argc, argv, "f:l:h:m:x:", long_options, NULL)) != -1) { 
+	while ((opt = getopt_long(argc, argv, "f:o:l:h:m:x:", long_options, NULL)) != -1) { 
 		switch (opt) {
 		case 'f':
 			fname = xstrdup(optarg);
@@ -176,6 +187,10 @@ int main(int argc, char **argv)
 		case 's':
 			step = atoi(optarg);
 			break;
+		case 'o':
+			outname = xstrdup(optarg);
+			ext = get_extention(outname);
+			break;
 		default:
 			fprintf(stderr, "error: unknow option\n");
 			exit(1);
@@ -189,6 +204,12 @@ int main(int argc, char **argv)
 	if (fname == NULL) {
 		fprintf(stderr, "error: no file name is specified\n");
 		exit(1);
+	}
+	
+	/* default output name */
+	if (outname == NULL) {
+		outname = xstrdup("output.png");
+		ext = get_extention(outname);	
 	}
 
 	gtk_init(&argc, &argv);
@@ -210,7 +231,7 @@ int main(int argc, char **argv)
 	
 	img_grayscale(rgb, gray);
 	img_gaussian_blur(gray, gray);
-	
+	/* init callbacks for global structure */
 	edge_ctx.refresh = refresh_cb;
 	edge_ctx.free = free_cb;
 
@@ -237,7 +258,7 @@ int main(int argc, char **argv)
 	
 	load_ctx(edges, newbuf);
 
-	if (!gdk_pixbuf_save(newbuf, "output.png", "png", &error, NULL)) {
+	if (!gdk_pixbuf_save(newbuf, outname, ext, &error, NULL)) {
 		g_printerr("failed to save image: %s\n", error->message);
 		g_error_free(error);
 		return EXIT_FAILURE;
