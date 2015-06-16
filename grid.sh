@@ -1,16 +1,57 @@
 #!/bin/sh
 
-IMG=$1
-OUTPUT="grid-$IMG"
+OPTS=$(getopt -o i:o: -l spacing -l color -l opacity: -l thickness: -- "$@")
 
-SPACING="100"
-COLOR="red"
-THICKNESS="1"
-OPACITY="1"
+IMG=
+OUT=
+SPACING=
+COLOR=
+THICKNESS=
+OPACITY=
+
+eval set -- "$OPTS"
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+	-i)
+		IMG=$2
+		shift;;
+	-o)
+		OUT=$2
+		shift;;
+	--spacing)
+		SPACING=$2
+		shift;;
+	--color)
+		COLOR=$2
+		shift;;
+	--thickness)
+		THICKNESS=$2
+		shift;;
+	--opacity)
+		OPACITY=$2
+		shift;;
+	--)
+		shift
+		break;;
+	-*)
+		echo "error: unrecongized option" 1>&2
+		break;;
+	*)
+		break;;
+	esac
+	shift
+done 
+
+[ -n "$IMG" ] || exit 1
+[ -n "$OUT" ] || exit 1
+[ -n "$SPACING" ] || SPACING="100"
+[ -n "$COLOR" ] || COLOR="red"
+[ -n "$THICKNESS" ] || THICKNESS="1"
+[ -n "$OPACITY" ] || OPACITY="1"
 
 WIDTH=$(identify -format %w "$IMG")
 HEIGHT=$(identify -format %h "$IMG")
-
 WIDX=$(expr $WIDTH - 1)
 HIDX=$(expr $HEIGHT - 1)
 
@@ -49,4 +90,4 @@ done
 
 OPTIONS="-fill none -stroke $COLOR -strokewidth $THICKNESS"
 
-convert $IMG $OPTIONS -pointsize 24 -draw "$TEXT stroke-opacity $OPACITY path '$VLINES' path '$HLINES'" $OUTPUT
+convert $IMG $OPTIONS -pointsize 24 -draw "$TEXT stroke-opacity $OPACITY path '$VLINES' path '$HLINES'" $OUT
