@@ -3,8 +3,12 @@
 
 #define BUFSIZE (4*1024)
 
+#ifndef FALSE
 #define FALSE 0
+#endif
+#ifndef TRUE
 #define TRUE !(FALSE)
+#endif
 
 #define TAN_22 0.41421356237	/* 22.5  */
 #define TAN_67 2.41421356237	/* 67.5 */

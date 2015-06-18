@@ -124,12 +124,6 @@ static void edge_append(int idx)
 		
 		edge_ctx.edge_size += BUFSIZE;
 		p = xrealloc(edge_ctx.edge_pixels, edge_ctx.edge_size);	
-	
-		if (p == NULL) {
-			fprintf(stderr, "edge_append: cannot allocate memory\n");
-			exit(1);
-		}
-
 		edge_ctx.edge_pixels = p;
 	}
 	/* add index to buffer */
